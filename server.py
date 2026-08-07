@@ -144,13 +144,14 @@ async def get_city_layout(settlement_type: str = "Suburban", population: int = 8
 
 
 @app.get("/stream-simulation")
-async def stream_simulation(days: int = 10, initial_infections: int = 2, settlement_type: str = "Suburban"):
+async def stream_simulation(days: int = 365, initial_infections: int = 2, settlement_type: str = "Suburban"):
     """
-    Streams frame-by-frame simulation updates containing:
+    Streams frame-by-frame simulation updates continuously until disconnected.
+    Contains:
     - Day & hour progress
     - City nodes (3D buildings layout)
     - All agents with coordinates (x,y,z), infection state, mask status, social distancing, hospitalization
-    - ALL agent interactions with pairwise infection data, mask & distancing effects, transmission probability, and pass-on outcome.
+    - ALL agent interactions with pairwise infection data.
     """
     async def event_generator():
         try:
@@ -178,7 +179,9 @@ async def stream_simulation(days: int = 10, initial_infections: int = 2, settlem
             yield f"data: {json.dumps({'event': 'init', 'city_nodes': engine.nodes, 'population': len(engine.agents)})}\n\n"
             await asyncio.sleep(0.1)
 
-            for day in range(1, days + 1):
+            # Infinite simulation loop — streams until client stops/disconnects
+            day = 1
+            while True:
                 active_cases = sum(1 for a in engine.agents if a["health_state"] == "I")
                 engine.agents = engine.risk_engine.evaluate_daily_population_risk(engine.agents, active_cases, len(engine.agents))
 
@@ -232,6 +235,7 @@ async def stream_simulation(days: int = 10, initial_infections: int = 2, settlem
                     await asyncio.sleep(0.15)
 
                 engine.disease_engine.update_agent_health_states(engine.agents)
+                day += 1
 
         except Exception as e:
             yield f"data: {json.dumps({'event': 'error', 'message': str(e)})}\n\n"
@@ -242,11 +246,9 @@ async def stream_simulation(days: int = 10, initial_infections: int = 2, settlem
         headers={
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
-            "X-Accel-Buffering": "no"  # Critical fix for ngrok / proxy stream buffering
+            "X-Accel-Buffering": "no"
         }
     )
-
-
 # ==============================================================================
 # SERVER LAUNCHER
 # ==============================================================================
