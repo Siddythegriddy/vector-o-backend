@@ -1,0 +1,62 @@
+{
+    "days": 90,
+    "initial_infections": 5,
+    "virus": {
+        "transmission": 35.0,
+        "mortality": 2.0,
+        "incubation": 5,
+        "recovery": 14
+    },
+    "settlement": {
+        "type": "metropolitan"
+    },
+    "personalities": [
+        {
+            "Name": "Extrovert",
+            "Population": 20,
+            "Social": 8,
+            "Mobility": 8,
+            "MaskProbability": 0.5
+        },
+        {
+            "Name": "Introvert",
+            "Population": 15,
+            "Social": 2,
+            "Mobility": 3,
+            "MaskProbability": 0.85
+        },
+        {
+            "Name": "Cautious Senior",
+            "Population": 10,
+            "Social": 3,
+            "Mobility": 2,
+            "MaskProbability": 0.9
+        },
+        {
+            "Name": "Essential Worker",
+            "Population": 15,
+            "Social": 6,
+            "Mobility": 7,
+            "MaskProbability": 0.65
+        },
+        {
+            "Name": "Children",
+            "Population": 15,
+            "Social": 7,
+            "Mobility": 5,
+            "MaskProbability": 0.2
+        },
+        {
+            "Name": "Travelers",
+            "Population": 5,
+            "Social": 9,
+            "Mobility": 10,
+            "MaskProbability": 0.25
+        }
+    ],
+    "policies": {
+        "mask_rule": false,
+        "lockdown": false,
+        "curfew": false
+    }
+}
